@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import { ExternalLink, Instagram } from "lucide-react"
 import Image from "next/image"
 import { useEffect, useRef, useState } from "react"
@@ -13,6 +14,8 @@ export default function SushiTimePage() {
   const featuresRef = useRef<HTMLDivElement>(null)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [isLoaded, setIsLoaded] = useState(false)
+  const [carouselApi, setCarouselApi] = useState<any>(null)
+  const [current, setCurrent] = useState(0)
 
   useEffect(() => {
     setIsLoaded(true)
@@ -89,6 +92,21 @@ export default function SushiTimePage() {
     }
   }, [])
 
+  useEffect(() => {
+    if (!carouselApi) return
+
+    const onSelect = () => {
+      setCurrent(carouselApi.selectedScrollSnap())
+    }
+
+    carouselApi.on("select", onSelect)
+    onSelect()
+
+    return () => {
+      carouselApi.off("select", onSelect)
+    }
+  }, [carouselApi])
+
   return (
     <div
       className={`min-h-screen bg-background transition-all duration-1000 ${isLoaded ? "opacity-100" : "opacity-0"}`}
@@ -117,12 +135,13 @@ export default function SushiTimePage() {
           transform: translateY(80px) scale(0.8) rotateY(15deg);
           animation: advancedFadeInUp 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
           transform-style: preserve-3d;
-          transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+          will-change: transform, box-shadow;
         }
         
         .gallery-item:hover {
-          transform: translateY(-20px) scale(1.05) rotateY(0deg);
-          box-shadow: 0 40px 80px rgba(0, 0, 0, 0.25);
+          transform: translateY(-12px) scale(1.03) rotateY(0deg);
+          box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.05);
           z-index: 10;
         }
         
@@ -166,10 +185,11 @@ export default function SushiTimePage() {
         }
         
         .feature-card {
-          transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+          transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
           transform-style: preserve-3d;
           position: relative;
           overflow: hidden;
+          will-change: transform, box-shadow;
         }
         
         .feature-card::before {
@@ -179,8 +199,8 @@ export default function SushiTimePage() {
           left: -100%;
           width: 100%;
           height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-          transition: left 0.8s;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+          transition: left 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
         
         .feature-card:hover::before {
@@ -188,8 +208,8 @@ export default function SushiTimePage() {
         }
         
         .feature-card:hover {
-          transform: translateY(-20px) rotateX(5deg) rotateY(-5deg);
-          box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+          transform: translateY(-8px) rotateX(2deg) rotateY(-2deg);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.05);
         }
         
         .magnetic-btn {
@@ -314,26 +334,59 @@ export default function SushiTimePage() {
       </section>
 
       {/* Gallery Section */}
-      <section className="py-32 px-4 bg-gradient-to-b from-muted to-background">
+      <section className="py-20 px-4 bg-gradient-to-b from-muted to-background">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-5xl md:text-7xl font-black text-center mb-20 text-foreground scroll-animate bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          <h2 className="text-5xl md:text-7xl font-black text-center mb-16 text-foreground scroll-animate bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
             Nuestras Creaciones
           </h2>
 
-          <div ref={galleryRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((index) => (
-              <div
+          <div className="relative max-w-6xl mx-auto scroll-animate px-12 sm:px-16">
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              setApi={setCarouselApi}
+              className="w-full"
+            >
+              <CarouselContent className="-ml-2 md:-ml-4">
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((index) => (
+                  <CarouselItem key={index} className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3">
+                    <div className="relative aspect-square rounded-3xl overflow-hidden group gallery-item image-reveal shadow-2xl">
+                      <Image
+                        src={`/images/sushi-gallery-${index}.jpg`}
+                        alt={`Creación de sushi ${index}`}
+                        fill
+                        className="object-cover group-hover:scale-110 transition-all duration-700 ease-out"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                      <div className="absolute bottom-4 left-4 right-4 text-white transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                        <p className="text-lg font-semibold shadow-lg">Creación Especial #{index}</p>
+                        <p className="text-sm opacity-90">Ingredientes frescos y técnica tradicional</p>
+                      </div>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="-left-8 sm:-left-12 lg:-left-16 bg-white/90 border-0 shadow-lg hover:bg-white hover:scale-110 transition-all duration-300 w-10 h-10 sm:w-12 sm:h-12" />
+              <CarouselNext className="-right-8 sm:-right-12 lg:-right-16 bg-white/90 border-0 shadow-lg hover:bg-white hover:scale-110 transition-all duration-300 w-10 h-10 sm:w-12 sm:h-12" />
+            </Carousel>
+          </div>
+
+          {/* Carousel indicators */}
+          <div className="flex justify-center mt-8 space-x-2">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((_, index) => (
+              <button
                 key={index}
-                className="relative aspect-square rounded-3xl overflow-hidden group gallery-item scroll-animate image-reveal"
-              >
-                <Image
-                  src={`/images/sushi-gallery-${index}.jpg`}
-                  alt={`Creación de sushi ${index}`}
-                  fill
-                  className="object-cover group-hover:scale-125 transition-all duration-1000 ease-out"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-              </div>
+                onClick={() => carouselApi?.scrollTo(index)}
+                className={`w-2 h-2 rounded-full transition-all duration-300 hover:scale-125 cursor-pointer ${
+                  index === current
+                    ? "bg-primary w-8 h-2"
+                    : "bg-muted-foreground/30 hover:bg-primary/60"
+                }`}
+                aria-label={`Ir a imagen ${index + 1}`}
+              />
             ))}
           </div>
         </div>
