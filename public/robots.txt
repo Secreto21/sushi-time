@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Optimización para SEO
+Allow: /images/
+Allow: /_next/static/
+
+# Sitemap
+Sitemap: https://sushipoke-time.com.ar/sitemap.xml
+
+# Crawl-delay (opcional, reduce carga del servidor)
+Crawl-delay: 1

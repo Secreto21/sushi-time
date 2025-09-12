@@ -306,7 +306,7 @@ export default function SushiTimePage() {
             />
           </div>
           <p className="text-xl md:text-3xl mb-12 font-light opacity-90 text-glow floating-element">
-            Auténtico sushi y poké en Buenos Aires
+            El mejor sushi y poké delivery de Buenos Aires 🍣
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center floating-element">
             <Button
@@ -316,7 +316,7 @@ export default function SushiTimePage() {
             >
               <a href="https://pedidos.masdelivery.com/sushi-time" target="_blank" rel="noopener noreferrer">
                 <ExternalLink className="mr-3 h-6 w-6" />
-                Pedí Ahora
+                Pedí Online - másDelivery
               </a>
             </Button>
             <Button
@@ -401,7 +401,8 @@ export default function SushiTimePage() {
           </h2>
           <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed mb-16 max-w-4xl mx-auto font-light scroll-animate">
             En Sushi Time, cada pieza es una obra de arte. Utilizamos ingredientes frescos de la más alta calidad y
-            técnicas tradicionales japonesas para brindarte sushi auténtico y poké bowls únicos en Buenos Aires.
+            técnicas tradicionales japonesas para brindarte el mejor sushi delivery y poké bowls únicos en Buenos Aires.
+            Pedí online a través de másDelivery y disfrutá en la comodidad de tu casa.
           </p>
 
           <div ref={featuresRef} className="grid md:grid-cols-3 gap-10 mt-20">
